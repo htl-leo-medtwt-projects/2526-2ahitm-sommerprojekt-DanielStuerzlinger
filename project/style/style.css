@@ -1,0 +1,132 @@
+/* Farben:
+
+Orange  #FF7F50
+Rot     #FF6F61
+Lila    #AF7AC5
+Blau    #5DADE2
+Grün    #58D68D
+Cream   #FDF2E9
+
+*/
+
+@font-face {
+    font-family: 'Exo';
+    src: url('../media/font/Exo/Exo-VariableFont_wght.ttf');
+}
+
+@font-face {
+    font-family: 'Bungee';
+    src: url('../media/font/Bungee/Bungee-Regular.ttf');
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    color: black;
+    background-color: #FF7F50;
+    font-family: 'Exo';
+}
+
+#main {
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#content {
+    position: relative;
+    z-index: 10;
+}
+
+/* Landing-Page style */
+
+#orbitLogo {
+    height: 22vh;
+    position: absolute;
+    top: 14vh;
+    left: 34vw;
+}
+
+h1 {
+    height: 20vh;
+    font-size: 20vh;
+    position: absolute;
+    font-family: 'Exo';
+    top: 2vh;
+    left: 47vw;
+    font-weight: 400;
+}
+
+/* Hintergrund */
+
+#background {
+    height: 100vh;
+    width: 100vw;
+    z-index: 1;
+}
+
+.backgroundObject {
+    position: absolute;
+    height: 15vh;
+}
+
+#backgroundObjekt1 {
+    top: 60vh;
+    left: 7vw;
+    width: 14vw;
+    transform: rotate(30deg);
+}
+
+#backgroundObjekt2 {
+    height: 5vh;
+    top: 20vh;
+    right: 8vw;
+    transform: rotate(-10deg);
+}
+
+/* Hauptmenue */
+
+#main {
+    font-family: 'Bungee';
+}
+
+.MenuSelect {
+    position: absolute;
+    top: 45vh;
+    left: 41vw
+}
+
+#main>div>div {
+    border-radius: 5%;
+    text-align: center;
+    border: black solid 1vh;
+    padding-left: 3vw;
+    padding-right: 3vw;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+    width: 10vw;
+    font-size: 3vh;
+    margin-top: 2vh;
+}
+
+.mainButton:hover {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+#startButton {
+    transform: scale(1.2);
+    margin-bottom: 3vh;
+}
+
+#startButton:hover {
+    transform: scale(1.3);
+}
