@@ -5,19 +5,20 @@ const keys = {};
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let objectColor = "#000";
+const sateliteScale = 0.6;
+const planetRadius = canvas.width * 0.045;
 
+let objectColor = "#000";
 let rotation = 0;
 let orbitAngle = 0;
 
-let isRunning = false;
+let lasers = [];
 
-function getPlanetRadius() {
-    return canvas.width * 0.06;
-}
+// Spieler
+const laserSpeed = 10;
 
 function getOrbitRadius() {
-    return canvas.width * 0.12;
+    return canvas.width * 0.09;
 }
 
 function initGame() {
@@ -26,20 +27,20 @@ function initGame() {
 
 // Planet
 function drawPlanet() {
-    const x = canvas.width / 2;
-    const y = canvas.height / 2;
+    let x = canvas.width / 2;
+    let y = canvas.height / 2;
 
     ctx.beginPath();
-    ctx.arc(x, y, getPlanetRadius(), 0, Math.PI * 2);
+    ctx.arc(x, y, planetRadius, 0, Math.PI * 2);
     ctx.fillStyle = "black";
     ctx.fill();
 }
 
 // Laufbahn
 function drawOrbit() {
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const orbitRadius = getOrbitRadius();
+    let centerX = canvas.width / 2;
+    let centerY = canvas.height / 2;
+    let orbitRadius = getOrbitRadius();
 
     ctx.beginPath();
     ctx.arc(centerX, centerY, orbitRadius, 0, Math.PI * 2);
@@ -53,7 +54,7 @@ function drawSatellite(x, y, color, rotation) {
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(rotation);
-    ctx.scale(0.7, 0.7);
+    ctx.scale(sateliteScale, sateliteScale);
 
     ctx.fillStyle = color;
     ctx.strokeStyle = color;
@@ -84,21 +85,54 @@ function drawSatellite(x, y, color, rotation) {
     ctx.restore();
 }
 
-function redraw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function drawLasers() {
+    ctx.fillStyle = objectColor;
 
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
+    lasers.forEach(laser => {
+        ctx.save();
+        ctx.translate(laser.x, laser.y);
+        ctx.rotate(laser.angle);
 
-    drawPlanet();
-    drawOrbit();
+        ctx.fillRect(0, -1, 20, 2);
 
-    // Hilfe von KI bei der berechnung
-    const orbitRadius = getOrbitRadius();
-    const satX = centerX + Math.cos(orbitAngle) * orbitRadius;
-    const satY = centerY + Math.sin(orbitAngle) * orbitRadius;
+        ctx.restore();
+    });
+}
 
-    drawSatellite(satX, satY, objectColor, rotation + orbitAngle);
+function updateLasers() {
+    lasers.forEach(laser => {
+        laser.x += Math.cos(laser.angle) * laserSpeed;
+        laser.y += Math.sin(laser.angle) * laserSpeed;
+    });
+
+    lasers = lasers.filter(l =>
+        l.x > 0 && l.x < canvas.width &&
+        l.y > 0 && l.y < canvas.height
+    );
+}
+
+function shootLaser() {
+    let centerX = canvas.width / 2;
+    let centerY = canvas.height / 2;
+
+    let orbitRadius = getOrbitRadius();
+    let satX = centerX + Math.cos(orbitAngle) * orbitRadius;
+    let satY = centerY + Math.sin(orbitAngle) * orbitRadius;
+
+    let baseAngle = rotation + orbitAngle;
+
+    let laserAngle = baseAngle - Math.PI / 2;
+
+    let tipOffset = 60;
+
+    let tipX = satX + Math.cos(laserAngle) * tipOffset;
+    let tipY = satY + Math.sin(laserAngle) * tipOffset;
+
+    lasers.push({
+        x: tipX,
+        y: tipY,
+        angle: laserAngle
+    });
 }
 
 // Update-Schleife
@@ -117,13 +151,40 @@ function update() {
         rotation += 0.05;
     }
 
+    updateLasers();
+
     redraw();
     requestAnimationFrame(update);
 }
 
-// Steuerung mit Tasten-Status
+function redraw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let centerX = canvas.width / 2;
+    let centerY = canvas.height / 2;
+
+    drawPlanet();
+    drawOrbit();
+
+    let orbitRadius = getOrbitRadius();
+    let satX = centerX + Math.cos(orbitAngle) * orbitRadius;
+    let satY = centerY + Math.sin(orbitAngle) * orbitRadius;
+
+    let totalRotation = rotation + orbitAngle;
+
+    drawSatellite(satX, satY, objectColor, totalRotation);
+
+    drawLasers();
+}
+
+
+// Steuerung
 document.addEventListener('keydown', (event) => {
     keys[event.key] = true;
+
+    if (event.code === "Space") {
+        shootLaser();
+    }
 });
 
 document.addEventListener('keyup', (event) => {
