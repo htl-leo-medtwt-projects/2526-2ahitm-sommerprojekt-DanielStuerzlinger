@@ -22,6 +22,7 @@ function getOrbitRadius() {
 }
 
 function initGame() {
+    startEnemySpawner();
     redraw();
 }
 
@@ -152,6 +153,8 @@ function update() {
     }
 
     updateLasers();
+    updateEnemies();
+    checkCollisions();
 
     redraw();
     requestAnimationFrame(update);
@@ -175,6 +178,7 @@ function redraw() {
     drawSatellite(satX, satY, objectColor, totalRotation);
 
     drawLasers();
+    drawEnemies();
 }
 
 
