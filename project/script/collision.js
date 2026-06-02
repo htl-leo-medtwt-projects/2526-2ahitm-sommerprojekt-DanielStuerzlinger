@@ -1,5 +1,4 @@
-
-const ENEMY_RADIUS = 28; 
+const ENEMY_RADIUS = 28;
 const SATELLITE_RADIUS = 22;
 const LASER_LENGTH = 20;
 const LASER_WIDTH = 2;
@@ -31,6 +30,7 @@ function checkCollisions() {
             if (laserHitsEnemy(laser, enemy)) {
                 enemy.alive = false;
                 laser.spent = true;
+                addScore();
             }
         });
 
@@ -38,8 +38,8 @@ function checkCollisions() {
 
         if (circlesOverlap(satX, satY, SATELLITE_RADIUS * sateliteScale,
             enemy.x, enemy.y, ENEMY_RADIUS)) {
-            console.log("Kollision: Satellit trifft Gegner!");
             enemy.alive = false;
+            addScore();
         }
 
         if (circlesOverlap(centerX, centerY, planetRadius,

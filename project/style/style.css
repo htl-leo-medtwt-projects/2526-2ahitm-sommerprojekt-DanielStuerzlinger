@@ -51,7 +51,7 @@ body {
 
 #content {
     position: relative;
-    z-index: 10;
+    z-index: 15000;
 }
 
 /* Landing-Page style */
@@ -60,7 +60,7 @@ body {
     height: 22vh;
     position: absolute;
     top: 14vh;
-    left: 34vw;
+    left: 33vw;
 }
 
 h1 {
@@ -69,7 +69,7 @@ h1 {
     position: absolute;
     font-family: 'Exo';
     top: 2vh;
-    left: 47vw;
+    left: 46vw;
     font-weight: 400;
 }
 
@@ -126,7 +126,6 @@ h1 {
 }
 
 .mainButton:hover {
-    transform: scale(1.2);
     cursor: pointer;
 }
 
@@ -163,10 +162,55 @@ h1 {
     border: black solid 1vh;
     padding-left: 3vw;
     padding-right: 3vw;
-    width: 10vw;
+    width: 15vw;
     font-size: 5vh;
     font-family: Exo;
     font-weight: bolder;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+/* Lautstärke-Slider */
+
+#volumeBox {
+    display: flex;
+    align-items: center;
+    gap: 1.5vw;
+    margin-bottom: 1vh;
+}
+
+#volumeSlider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14vw;
+    height: 1vh;
+    border-radius: 1vh;
+    background: #888;
+    outline: none;
+    cursor: pointer;
+}
+
+#volumeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 2.5vh;
+    height: 2.5vh;
+    border-radius: 50%;
+    background: black;
+    cursor: pointer;
+    border: 2px solid black;
+}
+
+#overlayMenu #volumeSlider {
+    background: #aaa;
+}
+
+#overlayMenu #volumeSlider::-webkit-slider-thumb {
+    background: white;
+    border-color: white;
 }
 
 /* Optionen Menü */
@@ -202,6 +246,7 @@ h1 {
     border: 4px solid black;
     margin: 5px;
     border-radius: 10px;
+    cursor: pointer;
 }
 
 /* Tutorial */
@@ -244,4 +289,169 @@ canvas {
     padding: 0;
     display: none;
     z-index: 10000;
+}
+
+/* Pause-Button */
+
+#pauseBtn {
+    display: none;
+    position: fixed;
+    top: -2vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20000;
+    background: rgba(0, 0, 0);
+    border-radius: 0 0 2vh 2vh;
+    width: 9vw;
+    height: 8vh;
+    padding-top: 2.5vh;
+    font-size: 4vh;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    font-family: 'Bungee', sans-serif;
+    color: white;
+    transition: background 0.15s, padding-top 0.15s;
+    box-sizing: border-box;
+    border: none;
+}
+
+#pauseBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 14000;
+}
+
+/* Pausemenü */
+
+#pauseMenu {
+    width: 40vw;
+    height: 70vh;
+    position: absolute;
+    top: 10vh;
+    left: 30vw;
+    background-color: rgba(0, 0, 0, 0.92);
+    border-radius: 40px;
+    color: white;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pauseScore {
+    font-size: 4vh;
+    font-family: 'Bungee';
+    text-align: center;
+    border: white solid 0.5vh;
+    border-radius: 20px;
+    padding: 1vh 3vw;
+    margin-bottom: 2vh;
+}
+
+.pauseMenuSelect {
+    position: static;
+    left: unset;
+    top: unset;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pauseMenuSelect .mainButton {
+    border-radius: 20px;
+    text-align: center;
+    border: white solid 0.4vh;
+    padding: 1.2vh 3vw;
+    width: 16vw;
+    font-size: 2.5vh;
+    margin-top: 1.5vh;
+    font-family: 'Bungee';
+    cursor: pointer;
+    color: white;
+}
+
+#overlayMenu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 15000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#overlayMenu .menuTitle {
+    position: static;
+    top: unset;
+    left: unset;
+    color: white;
+    border-color: white;
+    margin-bottom: 4vh;
+    font-family: 'Bungee';
+    font-size: 3vh;
+    padding: 1vh 3vw;
+    width: auto;
+}
+
+#overlayMenu #optionsMenu {
+    background: rgba(0, 0, 0, 0.88);
+    border-color: white;
+    color: white;
+    width: 40vw;
+    height: auto;
+    margin: 0;
+    padding: 4vh 4vw;
+    top: unset;
+    left: unset;
+    position: static;
+}
+
+#overlayMenu #optionsMenu h2 {
+    color: white;
+}
+
+#overlayMenu .colorBox {
+    border-color: white;
+}
+
+#overlayMenu #tutorialMenu {
+    position: static;
+    width: 70vw;
+    height: auto;
+    left: unset;
+    top: unset;
+}
+
+#overlayMenu .tutorialSubBox {
+    border-color: white;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#overlayMenu .backButton {
+    position: static;
+    top: unset;
+    left: unset;
+    color: white;
+    border-color: white;
+    margin-top: 3vh;
+    font-family: 'Bungee';
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#overlayMenu .backButton:hover {
+    background: white;
+    color: black;
 }

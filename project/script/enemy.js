@@ -2,13 +2,17 @@ const ENEMY_SPEED = 1.5;
 const SPAWN_INTERVAL_MIN = 500;
 const SPAWN_INTERVAL_MAX = 4000;
 
-const UFO_BRIM_W = 54;
-const UFO_BRIM_H = 14;
-const UFO_DOME_R = 14;
-const UFO_DOME_OFFSET = -8;
+const RAMP_DURATION = 120000;
 
+let spawnElapsed = 0;
 let enemies = [];
 let spawnTimer = null;
+let lastSpawnTime = null;
+
+function getSpawnInterval() {
+    const t = Math.min(spawnElapsed / RAMP_DURATION, 1);
+    return SPAWN_INTERVAL_MAX - t * (SPAWN_INTERVAL_MAX - SPAWN_INTERVAL_MIN);
+}
 
 function spawnEnemy() {
     const W = canvas.width;
@@ -48,17 +52,27 @@ function getRandomAngleInCone(centerAngle, coneAngle) {
 }
 
 function scheduleNextSpawn() {
-    const delay = SPAWN_INTERVAL_MIN +
-        Math.random() * (SPAWN_INTERVAL_MAX - SPAWN_INTERVAL_MIN);
+    const now = performance.now();
+    if (lastSpawnTime !== null) {
+        spawnElapsed += now - lastSpawnTime;
+    }
+    lastSpawnTime = now;
+
+    const delay = getSpawnInterval();
     spawnTimer = setTimeout(spawnEnemy, delay);
 }
 
 function startEnemySpawner() {
+    lastSpawnTime = performance.now();
     scheduleNextSpawn();
 }
 
 function stopEnemySpawner() {
     if (spawnTimer) clearTimeout(spawnTimer);
+    if (lastSpawnTime !== null) {
+        spawnElapsed += performance.now() - lastSpawnTime;
+        lastSpawnTime = null;
+    }
 }
 
 function updateEnemies() {

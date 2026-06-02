@@ -13,6 +13,14 @@ let rotation = 0;
 let orbitAngle = 0;
 
 let lasers = [];
+let score = 0;
+let highscore = 0;
+let isPaused = true;
+let animFrameId = null;
+
+// Laser-Cooldown
+const LASER_COOLDOWN = 300; // ms
+let lastShotTime = 0;
 
 // Spieler
 const laserSpeed = 10;
@@ -22,8 +30,76 @@ function getOrbitRadius() {
 }
 
 function initGame() {
+    // Reset game state
+    score = 0;
+    lasers = [];
+    enemies = [];
+    orbitAngle = 0;
+    rotation = 0;
+    lastShotTime = 0;
+    spawnElapsed = 0;
+
+    highscore = parseInt(localStorage.getItem("highscore") || "0");
+
+    isPaused = false;
+    updatePauseButton();
     startEnemySpawner();
-    redraw();
+    if (animFrameId) cancelAnimationFrame(animFrameId);
+    animFrameId = requestAnimationFrame(update);
+}
+
+function resetGame() {
+    score = 0;
+    lasers = [];
+    enemies = [];
+    orbitAngle = 0;
+    rotation = 0;
+    lastShotTime = 0;
+    spawnElapsed = 0;
+    isPaused = true;
+    if (animFrameId) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
+    }
+    stopEnemySpawner();
+}
+
+function pauseGame() {
+    isPaused = true;
+    stopEnemySpawner();
+    updatePauseButton();
+}
+
+function resumeGame() {
+    isPaused = false;
+    startEnemySpawner();
+    updatePauseButton();
+    animFrameId = requestAnimationFrame(update);
+}
+
+function togglePause() {
+    if (isPaused) {
+        continueGame();
+    } else {
+        pauseGame();
+        generateGamePause();
+    }
+}
+
+function updatePauseButton() {
+    const btn = document.getElementById("pauseBtn");
+    if (btn) {
+        btn.textContent = isPaused ? "▶" : "⏸";
+    }
+}
+
+function addScore() {
+    score++;
+    if (score > highscore) {
+        highscore = score;
+        localStorage.setItem("highscore", highscore);
+    }
+    if (typeof SoundManager !== "undefined") SoundManager.play("explosion");
 }
 
 // Planet
@@ -35,6 +111,13 @@ function drawPlanet() {
     ctx.arc(x, y, planetRadius, 0, Math.PI * 2);
     ctx.fillStyle = "black";
     ctx.fill();
+
+    // Score im Zentrum
+    ctx.fillStyle = "white";
+    ctx.font = `bold ${planetRadius * 0.8}px Exo, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(score, x, y);
 }
 
 // Laufbahn
@@ -113,6 +196,12 @@ function updateLasers() {
 }
 
 function shootLaser() {
+    if (isPaused) return;
+
+    const now = performance.now();
+    if (now - lastShotTime < LASER_COOLDOWN) return;
+    lastShotTime = now;
+
     let centerX = canvas.width / 2;
     let centerY = canvas.height / 2;
 
@@ -121,9 +210,7 @@ function shootLaser() {
     let satY = centerY + Math.sin(orbitAngle) * orbitRadius;
 
     let baseAngle = rotation + orbitAngle;
-
     let laserAngle = baseAngle - Math.PI / 2;
-
     let tipOffset = 60;
 
     let tipX = satX + Math.cos(laserAngle) * tipOffset;
@@ -134,10 +221,14 @@ function shootLaser() {
         y: tipY,
         angle: laserAngle
     });
+
+    if (typeof SoundManager !== "undefined") SoundManager.play("laser");
 }
 
 // Update-Schleife
 function update() {
+    if (isPaused) return;
+
     if (keys['a'] || keys['A']) {
         orbitAngle -= 0.025;
     }
@@ -157,7 +248,7 @@ function update() {
     checkCollisions();
 
     redraw();
-    requestAnimationFrame(update);
+    animFrameId = requestAnimationFrame(update);
 }
 
 function redraw() {
@@ -189,11 +280,12 @@ document.addEventListener('keydown', (event) => {
     if (event.code === "Space") {
         shootLaser();
     }
+
+    if (event.code === "Escape") {
+        togglePause();
+    }
 });
 
 document.addEventListener('keyup', (event) => {
     keys[event.key] = false;
 });
-
-initGame();
-update();
