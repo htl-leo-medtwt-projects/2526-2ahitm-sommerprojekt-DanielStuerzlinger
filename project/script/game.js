@@ -25,6 +25,18 @@ let lastShotTime = 0;
 // Spieler
 const laserSpeed = 10;
 
+// Sounds
+let gameVolume = parseFloat(localStorage.getItem("volume") ?? "0.5");
+const sfxLaser = new Audio("media/sounds/laser.mp3");
+const sfxExplosion = new Audio("media/sounds/explosion.mp3");
+const sfxStart = new Audio("media/sounds/start.mp3");
+
+function playSound(audio) {
+    audio.volume = gameVolume;
+    audio.currentTime = 0;
+    audio.play().catch(() => { });
+}
+
 function getOrbitRadius() {
     return canvas.width * 0.09;
 }
@@ -99,7 +111,7 @@ function addScore() {
         highscore = score;
         localStorage.setItem("highscore", highscore);
     }
-    if (typeof SoundManager !== "undefined") SoundManager.play("explosion");
+    playSound(sfxExplosion);
 }
 
 // Planet
@@ -222,7 +234,7 @@ function shootLaser() {
         angle: laserAngle
     });
 
-    if (typeof SoundManager !== "undefined") SoundManager.play("laser");
+    playSound(sfxLaser);
 }
 
 // Update-Schleife

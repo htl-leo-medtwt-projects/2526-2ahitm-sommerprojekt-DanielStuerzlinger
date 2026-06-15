@@ -89,14 +89,12 @@ function generateOptions() {
 function initVolumeSlider() {
     const slider = document.getElementById("volumeSlider");
     if (!slider) return;
-    const vol = typeof SoundManager !== "undefined" ? SoundManager.getVolume() : parseFloat(localStorage.getItem("volume") ?? "0.5");
-    slider.value = Math.round(vol * 100);
+    slider.value = Math.round(parseFloat(localStorage.getItem("volume") ?? "0.5") * 100);
 }
 
 function changeVolume(val) {
-    const v = parseInt(val) / 100;
-    if (typeof SoundManager !== "undefined") SoundManager.setVolume(v);
-    else localStorage.setItem("volume", v);
+    gameVolume = parseInt(val) / 100;
+    localStorage.setItem("volume", gameVolume);
 }
 
 function generateColorBoxes(containerId) {
@@ -226,7 +224,7 @@ function startGame() {
     const pauseBtn = document.getElementById("pauseBtn");
     pauseBtn.style.display = "block";
 
-    if (typeof SoundManager !== "undefined") SoundManager.play("start");
+    if (typeof playSound !== "undefined") playSound(sfxStart);
     initGame();
 }
 
