@@ -39,12 +39,15 @@ function checkCollisions() {
         if (circlesOverlap(satX, satY, SATELLITE_RADIUS * sateliteScale,
             enemy.x, enemy.y, ENEMY_RADIUS)) {
             enemy.alive = false;
-            addScore();
+            triggerGameOver();
+            return;
         }
 
         if (circlesOverlap(centerX, centerY, planetRadius,
             enemy.x, enemy.y, ENEMY_RADIUS)) {
             enemy.alive = false;
+            triggerGameOver();
+            return;
         }
     });
 

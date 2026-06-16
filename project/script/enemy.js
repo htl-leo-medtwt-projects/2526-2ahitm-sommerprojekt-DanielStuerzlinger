@@ -41,7 +41,10 @@ function spawnEnemy() {
 
     const faceAngle = Math.atan2(dy, dx) - Math.PI / 2;
 
-    enemies.push({ x, y, vx, vy, faceAngle, alive: true });
+    const wobbles = Math.random() < 0.1;
+    const wobblePhase = Math.random() * Math.PI * 2;
+
+    enemies.push({ x, y, vx, vy, faceAngle, alive: true, wobbles, wobblePhase });
 
     scheduleNextSpawn();
 }
@@ -78,8 +81,15 @@ function stopEnemySpawner() {
 function updateEnemies() {
     enemies.forEach(e => {
         if (!e.alive) return;
-        e.x += e.vx;
-        e.y += e.vy;
+        if (e.wobbles) {
+            e.wobblePhase = (e.wobblePhase || 0) + 0.07;
+            const perp = e.faceAngle;
+            e.x += e.vx + Math.cos(perp) * Math.sin(e.wobblePhase) * 1.5;
+            e.y += e.vy + Math.sin(perp) * Math.sin(e.wobblePhase) * 1.5;
+        } else {
+            e.x += e.vx;
+            e.y += e.vy;
+        }
     });
 
     const W = canvas.width;

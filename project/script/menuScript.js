@@ -204,6 +204,43 @@ function generateGamePause() {
     `;
 }
 
+function triggerGameOver() {
+    if (typeof pauseGame === "function") pauseGame();
+    playSound(sfxExplosion);
+    const finalScore = (typeof score !== "undefined") ? score : 0;
+    const currentHighscore = parseInt(localStorage.getItem("highscore") || "0");
+    generateGameOver(finalScore, currentHighscore);
+}
+
+function generateGameOver(finalScore, currentHighscore) {
+    removeBackdrop();
+    showBackdrop();
+
+    const existingOverlay = document.getElementById("overlayMenu");
+    if (existingOverlay) existingOverlay.remove();
+
+    output.innerHTML = `
+        <div id="pauseMenu">
+            <div class="menuTitle" style="position:static;top:unset;left:unset;border-color:#FF6F61;color:#FF6F61;margin-bottom:2vh;width:auto;"><h2>Game Over</h2></div>
+            <div class="pauseScore">Punkte: ${finalScore}</div>
+            <div class="pauseScore" style="font-size:2.5vh;margin-bottom:2vh;">Highscore: ${currentHighscore}</div>
+            <div class="MenuSelect pauseMenuSelect">
+                <div class="mainButton" onclick="restartGame()">Neu starten</div>
+                <div class="mainButton" onclick="generateMain()">Hauptmenü</div>
+            </div>
+        </div>
+    `;
+}
+
+function restartGame() {
+    removeBackdrop();
+    output.innerHTML = "";
+    background.innerHTML = "";
+    document.getElementById("canvas").style.display = "block";
+    document.getElementById("pauseBtn").style.display = "block";
+    if (typeof initGame === "function") initGame();
+}
+
 function continueGame() {
     const overlay = document.getElementById("overlayMenu");
     if (overlay) overlay.remove();
